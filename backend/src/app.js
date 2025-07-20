@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
 const mongoose = require('mongoose');
-const redis = require('redis');
 
 // Load environment variables
 dotenv.config();
@@ -40,20 +39,6 @@ mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/seblak_d
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-// Redis connection
-const redisClient = redis.createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379'
-});
-
-redisClient.on('error', (err) => {
-  console.error('Redis Client Error', err);
-});
-
-redisClient.connect();
-
-// Make Redis available globally
-app.locals.redis = redisClient;
 
 // Routes
 app.use('/api/auth', authRoutes);

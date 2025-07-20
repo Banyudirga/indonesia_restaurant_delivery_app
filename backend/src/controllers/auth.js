@@ -196,10 +196,7 @@ exports.sendOTP = async (req, res) => {
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // Store OTP in Redis with 5-minute expiry
-    const redis = req.app.locals.redis;
-    await redis.setex(`otp:${phone}`, 300, otp);
-
+    
     // In production, send OTP via SMS service
     // For now, we'll just return it (remove in production)
     console.log(`OTP for ${phone}: ${otp}`);
@@ -216,10 +213,7 @@ exports.verifyOTP = async (req, res) => {
   try {
     const { phone, otp } = req.body;
 
-    // Get OTP from Redis
-    const redis = req.app.locals.redis;
-    const storedOTP = await redis.get(`otp:${phone}`);
-
+    
     if (!storedOTP || storedOTP !== otp) {
       return res.status(400).json({ error: 'Invalid or expired OTP' });
     }
